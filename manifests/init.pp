@@ -9,31 +9,29 @@
 class ius (
   Enum['0','1'] $ius_enabled = '1',
 ) {
-  yumrepo { 'ius':
-    descr         => 'IUS for Enterprise Linux 7 - $basearch',
-    baseurl       => 'https://repo.ius.io/7/$basearch/',
-    enabled       => $ius_enabled,
-    repo_gpgcheck => '0',
-    gpgcheck      => '1',
-    gpgkey        => 'https://repo.ius.io/RPM-GPG-KEY-IUS-7',
-  }
+  $release = $facts['os']['release']['major']
 
-  yumrepo { 'ius-debuginfo':
-    descr         => 'IUS for Enterprise Linux 7 - $basearch - Debug',
-    baseurl       => 'https://repo.ius.io/7/$basearch/debug/',
-    enabled       => '0',
-    repo_gpgcheck => '0',
-    gpgcheck      => '1',
-    gpgkey        => 'https://repo.ius.io/RPM-GPG-KEY-IUS-7',
-  }
-
-  yumrepo { 'ius-source':
-    descr         => 'IUS for Enterprise Linux 7 - Source',
-    baseurl       => 'https://repo.ius.io/7/src/',
-    enabled       => '0',
-    repo_gpgcheck => '0',
-    gpgcheck      => '1',
-    gpgkey        => 'https://repo.ius.io/RPM-GPG-KEY-IUS-7',
+  yumrepo {
+    default:
+      repo_gpgcheck => '0',
+      gpgcheck      => '1',
+      gpgkey        => "https://repo.ius.io/RPM-GPG-KEY-IUS-${release}",
+    ;
+    'ius':
+      descr         => "IUS for Enterprise Linux ${release} - \$basearch",
+      baseurl       => "https://repo.ius.io/${release}/\$basearch/",
+      enabled       => $ius_enabled,
+    ;
+    'ius-debuginfo':
+      descr         => "IUS for Enterprise Linux ${release} - \$basearch - Debug",
+      baseurl       => "https://repo.ius.io/${release}/\$basearch/debug/",
+      enabled       => '0',
+    ;
+    'ius-source':
+      descr         => "IUS for Enterprise Linux ${release} - Source",
+      baseurl       => "https://repo.ius.io/${release}/src/",
+      enabled       => '0',
+    ;
   }
 
   yumrepo {
